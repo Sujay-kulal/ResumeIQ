@@ -99,7 +99,6 @@ export default function LandingPage({ onAnalyze, onBuild }) {
           <div className="lp-logo">
             <div className="lp-logo-icon" aria-hidden="true">✦</div>
             <span className="lp-logo-text">ResumeIQ</span>
-            <span className="lp-logo-badge">BETA</span>
           </div>
           <nav className="lp-nav-right" aria-label="Site navigation">
             <a href="#how-it-works" className="lp-nav-link">How it works</a>
