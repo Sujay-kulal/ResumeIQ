@@ -4488,6 +4488,7 @@ body {
 
 /* ========== DASHBOARD HOME ========== */
 .dashboard-home {
+  width: 100%;
   max-width: 1000px;
   margin: 0 auto;
   animation: fade-up var(--transition-base);
@@ -4518,7 +4519,7 @@ body {
 
 .onboarding-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
   gap: 24px;
   text-align: left;
 }
