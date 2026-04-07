@@ -63,15 +63,7 @@ function strengthenBullet(bullet, index = 0) {
   return b;
 }
 
-/**
- * Parse multi-line text field into bullet array.
- */
-function parseBullets(text) {
-  return text
-    .split('\n')
-    .map(l => l.replace(/^[\s•\-*]\s*/, '').trim())
-    .filter(l => l.length > 5);
-}
+
 
 /**
  * Parse experience entries (format: "Role | Company | Duration\nbullets")
@@ -102,11 +94,10 @@ function parseProjects(projText) {
 /**
  * Format skills into clean categorized lines.
  */
-function formatSkills(skillsText, targetRole) {
+function formatSkills(skillsText) {
   // Try to split by comma or newline
   const raw = skillsText.replace(/\n/g, ', ');
   // Also append top role keywords the user might have missed but listed
-  const roleKws = ROLE_KEYWORDS[targetRole] || [];
   const userSkills = raw.split(',').map(s => s.trim()).filter(Boolean);
 
   // Categorize loosely
@@ -127,7 +118,7 @@ function formatSkills(skillsText, targetRole) {
 }
 
 // ─── PART 1: Build Resume Text (local) ─────────────────────────
-export function buildResumeText({ name, contact, summary, skills, experience, projects, education, achievements, targetRole }) {
+export function buildResumeText({ name, contact, summary, skills, experience, projects, education, achievements }) {
   const lines = [];
 
   // Header
@@ -145,7 +136,7 @@ export function buildResumeText({ name, contact, summary, skills, experience, pr
   // Skills
   lines.push('SKILLS');
   lines.push('-'.repeat(60));
-  lines.push(formatSkills(skills, targetRole));
+  lines.push(formatSkills(skills));
   lines.push('');
 
   // Experience

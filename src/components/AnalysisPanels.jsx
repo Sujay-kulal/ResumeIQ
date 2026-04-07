@@ -74,9 +74,9 @@ export default function AnalysisPanels({ data }) {
   } = data;
 
   const tabs = [
-    { id: 'overview', icon: '📊', label: 'Overview',   count: 0 },
-    { id: 'skills',   icon: '⚡', label: 'Skills',     count: missing_keywords.length },
-    { id: 'fixes',    icon: '✍️', label: 'Fixes',      count: improved_bullets.length },
+    { id: 'overview',  icon: '📊', label: 'Overview',       count: 0 },
+    { id: 'skills',    icon: '⚡', label: 'Skills Gap',     count: missing_keywords.length },
+    { id: 'fixes',     icon: '✍️', label: 'Experience Fixes', count: improved_bullets.length },
   ];
 
   return (
@@ -135,7 +135,7 @@ export default function AnalysisPanels({ data }) {
         </div>
       </div>
 
-      {/* ── Tab 2: Skills ── */}
+      {/* ── Tab 2: Skills Gap ── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* Matched */}
         {matched_keywords.length > 0 && (
@@ -169,11 +169,13 @@ export default function AnalysisPanels({ data }) {
           <div className="panel-header">
             <div className="panel-icon" style={{ background: 'rgba(239,68,68,0.12)' }}>🔍</div>
             <h3 className="panel-title">Missing Keywords</h3>
-            <span className="panel-count">{missing_keywords.length} missing</span>
+            <span className="panel-count" style={{ color: missing_keywords.length > 0 ? 'var(--accent-red)' : undefined }}>
+              {missing_keywords.length} missing
+            </span>
           </div>
           <div className="keywords-grid">
             {missing_keywords.map((kw, i) => (
-              <span key={i} className="keyword-chip keyword-missing">{kw}</span>
+              <span key={i} className="keyword-chip keyword-missing">+ {kw}</span>
             ))}
             {missing_keywords.length === 0 && (
               <p style={{ color: 'var(--text-muted)', fontSize: '0.87rem' }}>🎉 No critical keywords missing!</p>
@@ -199,7 +201,7 @@ export default function AnalysisPanels({ data }) {
         </div>
       </div>
 
-      {/* ── Tab 3: Fixes ── */}
+      {/* ── Tab 3: Experience Fixes ── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
         {/* Weak points */}
         <div className="panel">
@@ -231,6 +233,11 @@ export default function AnalysisPanels({ data }) {
                   <div className="bullet-label bullet-label-before">❌ Before — Vague</div>
                   {bullet.original}
                 </div>
+
+                <div className="bullet-arrow-divider">
+                  <span>↓</span> AI Improvement <span>↓</span>
+                </div>
+
                 <div className="bullet-after">
                   <div className="bullet-label bullet-label-after" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <span>✅ After — Improved</span>

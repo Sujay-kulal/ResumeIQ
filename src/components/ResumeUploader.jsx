@@ -28,6 +28,7 @@ export default function ResumeUploader({
     if (saved && ROLE_OPTIONS.includes(saved)) {
       onTargetRoleChange(saved);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onDrop = useCallback((accepted, rejected) => {

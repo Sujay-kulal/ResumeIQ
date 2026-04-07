@@ -5,7 +5,7 @@
  */
 
 // ─── Template: Modern ────────────────────────────────────────
-function modernTemplate({ name, contact, resumeText }) {
+function modernTemplate({ name }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -126,7 +126,6 @@ __CONTENT__
 function parsePlainTextToHTML(resumeText, templateName) {
   const lines = resumeText.split('\n');
   const isModern = templateName === 'modern';
-  const isClassic = templateName === 'classic';
 
   let html = '';
   let inSection = false;
@@ -143,7 +142,6 @@ function parsePlainTextToHTML(resumeText, templateName) {
   const SECTION_HEADERS = ['SUMMARY', 'SKILLS', 'EXPERIENCE', 'PROJECTS', 'EDUCATION', 'ACHIEVEMENTS'];
   const DIVIDER = /^[-=]{10,}$/;
 
-  let lineIdx = 0;
   const totalLines = lines.length;
 
   // First two non-empty lines = name + contact
@@ -191,8 +189,8 @@ function parsePlainTextToHTML(resumeText, templateName) {
     }
 
     // Bullet lines
-    if (/^[•·▸→\-\*]\s/.test(raw) || /^\s{2,}[•·▸→\-\*]\s/.test(raw)) {
-      const content = line.replace(/^[•·▸→\-\*]\s*/, '');
+    if (/^[•·▸→*-]\s/.test(raw) || /^\s{2,}[•·▸→*-]\s/.test(raw)) {
+      const content = line.replace(/^[•·▸→*-]\s*/, '');
       bulletBuffer.push(content);
       continue;
     }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { exportResumePDF } from '../utils/exportPDF';
 
 function getGrade(score) {
@@ -42,11 +42,8 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
     skill_match_percentage = 0,
     section_scores = {},
     missing_keywords = [],
-    matched_keywords = [],
-    weak_points = [],
     improved_bullets = [],
     suggested_skills = [],
-    section_feedback = {},
     summary = {},
   } = data;
 

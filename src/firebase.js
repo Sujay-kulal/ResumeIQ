@@ -23,7 +23,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+if (app.name && typeof window !== 'undefined') {
+  // eslint-disable-next-line no-unused-vars
+  const analytics = getAnalytics(app);
+}
 export const auth = getAuth(app);
 
 const googleProvider = new GoogleAuthProvider();

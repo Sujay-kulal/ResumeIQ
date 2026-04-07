@@ -73,7 +73,7 @@ export default function GitHubIntegration({ onAddProjects }) {
     <section className="github-section" aria-labelledby="github-heading">
       <div className="container">
         <h2 className="section-title" id="github-heading">
-          <span aria-hidden="true">🐙</span> GitHub Project Integration
+          <span aria-hidden="true">🐙</span> GitHub Project Selector
         </h2>
         <p className="section-subtitle">
           Fetch your public repositories and select which ones to include in your resume
@@ -121,15 +121,26 @@ export default function GitHubIntegration({ onAddProjects }) {
           </div>
         )}
 
-        {/* Repos grid */}
+        {/* Empty state */}
         {fetched && !loading && repos.length === 0 && (
           <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px 0' }}>
             No public repositories found for this account.
           </p>
         )}
 
+        {/* Repos grid */}
         {fetched && repos.length > 0 && (
           <>
+            {/* Stats row */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16, flexWrap: 'wrap' }}>
+              <span style={{ font: '0.82rem/1 var(--font-sans)', color: 'var(--text-muted)' }}>
+                {repos.length} repositories found
+              </span>
+              <span style={{ fontSize: '0.82rem', color: 'var(--accent-purple-light)', background: 'rgba(124,58,237,0.08)', border: '1px solid rgba(124,58,237,0.2)', padding: '3px 10px', borderRadius: 20 }}>
+                ⭐ {repos.filter(r => r._score >= 5).length} recommended
+              </span>
+            </div>
+
             <div className="github-repos-grid" role="list" aria-label="GitHub repositories">
               {repos.map(repo => {
                 const isSelected    = selected.has(repo.id);
@@ -144,16 +155,19 @@ export default function GitHubIntegration({ onAddProjects }) {
                     tabIndex={0}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && toggleRepo(repo.id)}
                   >
-                    {/* Checkbox */}
-                    <div className="github-checkbox" aria-hidden="true">
-                      {isSelected ? '✓' : ''}
-                    </div>
+                    {/* Header row: checkbox + name + badges */}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
+                      {/* Enhanced checkbox */}
+                      <div className="github-checkbox-v2" aria-hidden="true">
+                        {isSelected ? '✓' : ''}
+                      </div>
 
-                    <div className="github-repo-top">
-                      <div className="github-repo-name">{repo.name}</div>
-                      <div className="github-repo-badges">
-                        {isRecommended && <span className="github-badge recommended">⭐ Top</span>}
-                        {isSelected && <span className="github-badge selected-badge">✓ Added</span>}
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div className="github-repo-name">{repo.name}</div>
+                        <div className="github-repo-badges">
+                          {isRecommended && <span className="github-badge recommended">⭐ Recommended</span>}
+                          {isSelected    && <span className="github-badge selected-badge">✓ Selected</span>}
+                        </div>
                       </div>
                     </div>
 

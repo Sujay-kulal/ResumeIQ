@@ -113,7 +113,7 @@ function correctBullet(line) {
   if (!trimmed) return line;
 
   // Strip bullet characters
-  const bulletMatch = trimmed.match(/^([•·→▸\-\*]\s*)/);
+  const bulletMatch = trimmed.match(/^([•·→▸*-]\s*)/);
   const bulletPrefix = bulletMatch ? bulletMatch[1] : '';
   let content = bulletMatch ? trimmed.slice(bulletPrefix.length).trim() : trimmed;
 

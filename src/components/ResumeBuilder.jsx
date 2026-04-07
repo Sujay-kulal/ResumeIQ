@@ -170,12 +170,13 @@ export default function ResumeBuilder({ onGenerate, isLoading }) {
   const hasSavedData = Object.values(form).some(v => v && v !== 'Software Engineer (General)' && v.trim());
 
   return (
-    <section className="builder-section" aria-labelledby="builder-heading">
-      <div className="container">
-        <h2 className="section-title" id="builder-heading">Resume Builder</h2>
-        <p className="section-subtitle">
-          Enter your details — the engine generates an ATS-optimized resume + scores it instantly
-        </p>
+    <section className="builder-section" aria-labelledby="builder-heading" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div className="builder-split-layout">
+        <div className="builder-form-panel">
+          <h2 className="section-title" id="builder-heading">Resume Builder</h2>
+          <p className="section-subtitle">
+            Enter your details — the engine generates an ATS-optimized resume + scores it instantly
+          </p>
 
         {hasSavedData && (
           <div className="session-banner" role="status">
@@ -302,6 +303,66 @@ export default function ResumeBuilder({ onGenerate, isLoading }) {
                 }
               </button>
             )}
+          </div>
+        </div>
+
+        {/* ── LIVE PREVIEW PANEL ── */}
+        <div className="builder-preview-panel">
+          <div className="preview-sticky">
+            <div className="preview-header">
+              <h3>Live Preview</h3>
+              <span className="live-badge">Live</span>
+            </div>
+            
+            <div className="preview-document">
+              <div className="preview-doc-header">
+                <h1 className="preview-name">{form.name || 'Your Name'}</h1>
+                <p className="preview-contact">{form.contact || 'Contact Information'}</p>
+              </div>
+
+              {form.summary && (
+                <div className="preview-section">
+                  <h4 className="preview-section-title">Professional Summary</h4>
+                  <p className="preview-text">{form.summary}</p>
+                </div>
+              )}
+
+              {form.experience && (
+                <div className="preview-section">
+                  <h4 className="preview-section-title">Experience</h4>
+                  <pre className="preview-pre">{form.experience}</pre>
+                </div>
+              )}
+
+              {form.projects && (
+                <div className="preview-section">
+                  <h4 className="preview-section-title">Projects</h4>
+                  <pre className="preview-pre">{form.projects}</pre>
+                </div>
+              )}
+
+              {form.skills && (
+                <div className="preview-section">
+                  <h4 className="preview-section-title">Skills</h4>
+                  <p className="preview-text">{form.skills}</p>
+                </div>
+              )}
+
+              {form.education && (
+                <div className="preview-section">
+                  <h4 className="preview-section-title">Education</h4>
+                  <pre className="preview-pre">{form.education}</pre>
+                </div>
+              )}
+
+              {form.achievements && (
+                <div className="preview-section">
+                  <h4 className="preview-section-title">Achievements</h4>
+                  <pre className="preview-pre">{form.achievements}</pre>
+                </div>
+              )}
+            </div>
+            </div>
           </div>
         </div>
       </div>

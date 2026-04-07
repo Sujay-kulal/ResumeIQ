@@ -12,16 +12,20 @@ export default function Navbar({ theme, onToggleTheme, mode, onModeSwitch, user,
   }, []);
 
   // Support both Firebase user (displayName) and legacy user (name)
-  const displayName = user?.displayName || user?.name || 'User';
+  const displayName  = user?.displayName || user?.name || 'User';
+  const firstName    = displayName.split(' ')[0];
   const displayEmail = user?.email || '';
-  const photoURL = user?.photoURL || user?.photo;
+  const photoURL     = user?.photoURL || user?.photo;
 
   const initials = displayName
     ? displayName.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
     : '?';
 
   return (
-    <header className="navbar" role="banner">
+    <header className="navbar" role="banner" style={{ position: 'relative' }}>
+      {/* Subtle gradient accent line at bottom */}
+      <div className="navbar-bottom-line" aria-hidden="true" />
+
       <div className="container navbar-inner">
 
         {/* Logo */}
@@ -58,8 +62,15 @@ export default function Navbar({ theme, onToggleTheme, mode, onModeSwitch, user,
           </nav>
         )}
 
-        {/* Right: Theme + Badge + User */}
+        {/* Right: Theme + Greeting + User */}
         <div className="navbar-right">
+          {/* User greeting (desktop only) */}
+          {user && (
+            <span className="navbar-greeting">
+              Hi, {firstName}!
+            </span>
+          )}
+
           {/* Theme toggle */}
           <button
             id="theme-toggle-btn"
@@ -76,7 +87,7 @@ export default function Navbar({ theme, onToggleTheme, mode, onModeSwitch, user,
             </span>
           </button>
 
-          {/* AI badge (hidden on mobile) */}
+          {/* AI badge (hidden on mobile, shown when not logged in) */}
           {!user && (
             <div className="navbar-badge" aria-label="AI Powered">AI POWERED</div>
           )}

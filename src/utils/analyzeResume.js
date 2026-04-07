@@ -262,7 +262,7 @@ function scoreEducation(text) {
   if (degreeKeywords.some(d => lower.includes(d))) score += 20;
 
   if (/university|college|institute|school/i.test(lower)) score += 10;
-  if (/\b(gpa|cgpa|grade)\s*[:\-]?\s*\d/i.test(lower)) score += 10;
+  if (/\b(gpa|cgpa|grade)\s*[-:]?\s*\d/i.test(lower)) score += 10;
   if (/\b(honor|distinction|merit|gold medal|rank)\b/i.test(lower)) score += 10;
   if (/\b(2[0-9]{3})\b/.test(lower)) score += 10; // has year
 
@@ -270,7 +270,7 @@ function scoreEducation(text) {
 }
 
 // ─── STEP 7: Build section feedback ───────────────────────────
-function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBullets, matched, missing) {
+function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBullets) {
   const feedback = {};
 
   // Skills
@@ -345,7 +345,7 @@ function rewriteBullets(weakBullets) {
 }
 
 // ─── STEP 9: Generate suggested skills ───────────────────────
-function suggestSkills(missing, matched) {
+function suggestSkills(missing) {
   // Return top missing keywords (already calculated)
   return missing.slice(0, 10);
 }
@@ -423,10 +423,10 @@ export async function analyzeResume(resumeText, _apiKey, targetRole = 'Software 
   const overallScore = atsScore;
 
   // 5. Build outputs
-  const section_feedback = buildFeedback(skillData, expScore, projectScore, formatScore, expData.weakBullets, skillData.matched, skillData.missing);
+  const section_feedback = buildFeedback(skillData, expScore, projectScore, formatScore, expData.weakBullets);
   const improved_bullets = rewriteBullets(expData.weakBullets);
   const summary = buildSummary(skillData.pct, expScore, projectScore, formatScore, eduScore, skillData.matched, skillData.missing);
-  const suggested_skills = suggestSkills(skillData.missing, skillData.matched);
+  const suggested_skills = suggestSkills(skillData.missing);
 
   // 6. Keyword density — count appearances of each matched keyword
   const keyword_density = {};

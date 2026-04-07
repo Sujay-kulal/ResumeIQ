@@ -15,17 +15,18 @@ export default function Hero({ onGetStarted }) {
           </div>
 
           <h1 className="hero-title" id="hero-heading">
-            Transform Your Resume
+            Your Resume Gets Rejected
             <br />
-            <span className="hero-title-gradient">Into an Opportunity</span>
+            <span className="hero-title-gradient">Before Humans See It.</span>
           </h1>
 
           <p className="hero-subtitle">
-            Get a professional ATS analysis in seconds — no API key, no login, no data sent anywhere.
-            Upload your resume, pick a target role, and get precision scores instantly.
+            Analyze, optimize, and build ATS-friendly resumes with real-time feedback.
+            Upload your resume and get a precision ATS score in seconds.
           </p>
 
-          <div className="hero-stats" role="list" aria-label="Platform statistics">
+          {/* Trust signals */}
+          <div className="hero-stats" role="list" aria-label="Trust signals">
             <div className="hero-stat" role="listitem">
               <div className="hero-stat-value">6+</div>
               <div className="hero-stat-label">Dimensions Scored</div>
@@ -49,6 +50,12 @@ export default function Hero({ onGetStarted }) {
             <span aria-hidden="true">⚡</span>
             Analyze My Resume
           </button>
+
+          {/* Privacy trust row */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 20, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>🔒 Privacy-first: No data stored</span>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>⚡ Runs locally in your browser</span>
+          </div>
         </div>
       </div>
     </section>

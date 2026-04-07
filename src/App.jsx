@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { onAuthChange, signOutUser } from './firebase';
-import { apiAnalyzeResume, apiGenerateResume } from './api';
-import Navbar            from './components/Navbar';
-import Hero              from './components/Hero';
+import { apiAnalyzeResume } from './api';
+import Sidebar           from './components/Sidebar';
+import Topbar            from './components/Topbar';
+import DashboardHome     from './components/DashboardHome';
+import LandingPage       from './components/LandingPage';
 import Login             from './components/Login';
 import Signup            from './components/Signup';
 import ResumeUploader    from './components/ResumeUploader';
@@ -13,20 +15,12 @@ import ScoreDashboard    from './components/ScoreDashboard';
 import AnalysisPanels    from './components/AnalysisPanels';
 import Confetti          from './components/Confetti';
 import GitHubIntegration from './components/GitHubIntegration';
+import ResumeFixIt       from './components/ResumeFixIt';
 import { extractResumeText } from './utils/extractText';
 import { analyzeResume }     from './utils/analyzeResume';
 import { generateAndAnalyze } from './utils/generateResume';
 
 const THEME_KEY = 'resumeiq_theme';
-
-const IDLE_FEATURES = [
-  { icon: '🔒', title: '100% Private',     desc: 'No data leaves your browser. Zero network requests during analysis.' },
-  { icon: '📊', title: 'ATS Score',         desc: 'Skills×40% + Experience×20% + Projects×20% + Format×20%.' },
-  { icon: '⚡', title: 'Instant Results',   desc: 'Full ATS report generated in under 2 seconds.' },
-  { icon: '🎯', title: '30+ Roles',         desc: 'Tailored keyword libraries for every tech role.' },
-  { icon: '✍️', title: 'Bullet Rewrites',  desc: 'Action-verb rewrites to strengthen weak bullet points.' },
-  { icon: '🐙', title: 'GitHub Sync',       desc: 'Fetch & select your best repos to auto-populate projects.' },
-];
 
 export default function App() {
   // ── Theme ──────────────────────────────────────────────────────
@@ -41,6 +35,13 @@ export default function App() {
   const [user,      setUser]      = useState(null);
   const [authReady, setAuthReady] = useState(false);
   const [authView,  setAuthView]  = useState('login'); // 'login' | 'signup'
+
+  // showAuth: controls whether to show auth page vs landing page (for logged-out users)
+  const [showAuth,  setShowAuth]  = useState(false);
+  const [showFixItModal, setShowFixItModal] = useState(false);
+  
+  // ── Mode / View ────────────────────────────────────────────────
+  const [currentView, setCurrentView] = useState('home'); // 'home', 'analyze', 'build', 'github', 'settings'
 
   // Listen for Firebase auth state changes
   useEffect(() => {
@@ -62,7 +63,10 @@ export default function App() {
     return unsub;
   }, []);
 
-  const handleLogin  = (u) => setUser(u);
+  const handleLogin  = (u) => {
+    setUser(u);
+    setCurrentView('home');
+  };
   const handleLogout = async () => {
     try {
       await signOutUser();
@@ -70,13 +74,14 @@ export default function App() {
       // Firebase sign-out failed, clear locally anyway
     }
     setUser(null);
+    setShowAuth(false);
     setResult(null);
     setBuildResult(null);
     setError(null);
   };
 
-  // ── Mode: 'analyze' | 'build' ───────────────────────────────────
-  const [mode, setMode] = useState('analyze');
+  // Legacy cleanups removed 
+
 
   // ── Analyzer state ──────────────────────────────────────────────
   const [file,         setFile]         = useState(null);
@@ -92,15 +97,18 @@ export default function App() {
   const [buildResult,  setBuildResult]  = useState(null);
   const [buildRole,    setBuildRole]    = useState('');
 
-  // ── GitHub tab (visible in build mode left panel) ────────────────
-  const [showGitHub, setShowGitHub] = useState(false);
+  // ── GitHub tab states removed ────────────────
 
   const resultsRef = useRef(null);
   const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
-  const switchMode = (m) => {
-    setMode(m); setResult(null); setBuildResult(null);
-    setError(null); setFile(null); setShowGitHub(false);
+  const switchMode = (m) => setCurrentView(m);
+
+  const navigateTo = (view) => {
+    setCurrentView(view);
+    if (view === 'home') {
+      setError(null);
+    }
   };
 
   // ── Analyze ─────────────────────────────────────────────────────
@@ -180,9 +188,26 @@ export default function App() {
     const form = existing ? JSON.parse(existing) : {};
     const updated = { ...form, projects: (form.projects ? form.projects + '\n\n' : '') + projectsText };
     sessionStorage.setItem('resumeiq_builder_form', JSON.stringify(updated));
-    setShowGitHub(false);
-    setMode('build');
+    setCurrentView('build');
     alert('✅ Projects added! Switch to Build mode — your projects section is pre-filled.');
+  };
+
+  const handleApplyFixes = ({ acceptedBullets, addedSkills }) => {
+    setShowFixItModal(false);
+    const existing = sessionStorage.getItem('resumeiq_builder_form');
+    const form = existing ? JSON.parse(existing) : { targetRole: analyzedRole || targetRole };
+    
+    let addedExperience = acceptedBullets.map(b => b.improved).join('\n\n');
+    let addedSkillsText = addedSkills.join(', ');
+
+    const updated = {
+      ...form,
+      experience: form.experience ? form.experience + '\n\n' + addedExperience : addedExperience,
+      skills: (form.skills ? form.skills + (addedSkillsText ? ', ' : '') : '') + addedSkillsText
+    };
+    
+    sessionStorage.setItem('resumeiq_builder_form', JSON.stringify(updated));
+    setCurrentView('build');
   };
 
   const activeScore = result?.overall_score ?? buildResult?.overall_score ?? 0;
@@ -207,125 +232,41 @@ export default function App() {
     );
   }
 
-  // ── Not logged in → Auth screens ────────────────────────────────
+  // ── Not logged in → Landing or Auth ────────────────────────────
   if (!user) {
+    if (!showAuth) {
+      return (
+        <LandingPage
+          onAnalyze={() => { setCurrentView('analyze'); setShowAuth(true); setAuthView('login'); }}
+          onBuild={() => { setCurrentView('build'); setShowAuth(true); setAuthView('login'); }}
+        />
+      );
+    }
     return authView === 'login'
       ? <Login  onLogin={handleLogin} onSwitchToSignup={() => setAuthView('signup')} />
       : <Signup onLogin={handleLogin} onSwitchToLogin={() => setAuthView('login')}  />;
   }
 
   return (
-    <div className="app">
-      <Navbar
-        theme={theme} onToggleTheme={toggleTheme}
-        mode={mode}   onModeSwitch={switchMode}
-        user={user}   onLogout={handleLogout}
+    <div className="dashboard-layout">
+      <Sidebar 
+        currentView={currentView} 
+        onNavigate={navigateTo} 
+        onLogout={handleLogout} 
       />
 
-      {hasResults && <Confetti score={activeScore} />}
-      {isActive    && <AnalysisLoader currentStep={currentStep} />}
+      <main className="main-content">
+        <Topbar 
+          user={user} 
+          theme={theme} 
+          onToggleTheme={toggleTheme} 
+          currentView={currentView} 
+          onNavigate={navigateTo} 
+        />
 
-      {/* Mobile/tablet-only hero (CSS hides on desktop 1200px+) */}
-      {!hasResults && !isActive && (
-        <div className="mobile-hero-wrapper">
-          <Hero onGetStarted={() => {}} />
-        </div>
-      )}
-
-      {/* ── Main split body ────────────────────────────────────── */}
-      <div className={`app-body${hasResults ? ' has-results' : ''}`}>
-
-        {/* ── LEFT PANEL ── */}
-        <div className="split-left">
-
-          {/* ── ANALYZE mode ── */}
-          {mode === 'analyze' && (
-            <>
-              {result
-                ? (
-                  <div className="split-left-sticky-bar">
-                    <div className="split-left-bar-emoji">✅</div>
-                    <div className="split-left-bar-title">Analysis Complete</div>
-                    <p className="split-left-bar-sub">
-                      Your resume scored <strong style={{ color: 'var(--accent-purple-light)' }}>{result.overall_score}/100</strong>.
-                      {result.ai_enhanced && <span style={{ color: 'var(--accent-blue-light)', marginLeft: '8px' }}>✨ AI Enhanced</span>}
-                      {' '}Upload another resume or switch to Build mode to create a new one.
-                    </p>
-                    <div className="split-left-bar-btns">
-                      <button className="btn btn-primary"  onClick={handleReset}              type="button">↩ Analyze Another</button>
-                      <button className="btn btn-outline"  onClick={() => switchMode('build')} type="button">✨ Build a Resume</button>
-                      <button className="btn btn-outline"  onClick={() => window.print()}      type="button" id="print-report-btn">🖨 Print Report</button>
-                    </div>
-                  </div>
-                )
-                : (
-                  <ResumeUploader
-                    file={file}                    onFileChange={setFile}
-                    targetRole={targetRole}        onTargetRoleChange={setTargetRole}
-                    onAnalyze={handleAnalyze}      isLoading={isLoading}
-                  />
-                )
-              }
-            </>
-          )}
-
-          {/* ── BUILD mode ── */}
-          {mode === 'build' && (
-            <>
-              {buildResult
-                ? (
-                  <div className="split-left-sticky-bar">
-                    <div className="split-left-bar-emoji">✨</div>
-                    <div className="split-left-bar-title">Resume Generated</div>
-                    <p className="split-left-bar-sub">
-                      Your ATS-optimized resume is ready with a score of <strong style={{ color: 'var(--accent-purple-light)' }}>{buildResult.overall_score}/100</strong>.
-                    </p>
-                    <div className="split-left-bar-btns">
-                      <button className="btn btn-primary" onClick={handleBuilderReset}          type="button">🔄 Build Another</button>
-                      <button className="btn btn-outline" onClick={() => switchMode('analyze')} type="button">🔍 Analyze Instead</button>
-                    </div>
-                  </div>
-                )
-                : (
-                  <>
-                    {/* GitHub toggle tab */}
-                    <div style={{ borderBottom: '1px solid var(--border-subtle)', display: 'flex', gap: 0 }}>
-                      <button
-                        type="button"
-                        onClick={() => setShowGitHub(false)}
-                        style={{
-                          flex: 1, padding: '14px 12px', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)',
-                          fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s',
-                          background: !showGitHub ? 'var(--gradient-primary)' : 'transparent',
-                          color: !showGitHub ? 'white' : 'var(--text-muted)',
-                          borderBottom: !showGitHub ? '2px solid transparent' : '2px solid transparent',
-                        }}
-                      >
-                        ✨ Build Resume
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowGitHub(true)}
-                        style={{
-                          flex: 1, padding: '14px 12px', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-sans)',
-                          fontWeight: 600, fontSize: '0.85rem', transition: 'all 0.2s',
-                          background: showGitHub ? 'var(--gradient-secondary)' : 'transparent',
-                          color: showGitHub ? 'white' : 'var(--text-muted)',
-                        }}
-                      >
-                        🐙 GitHub Projects
-                      </button>
-                    </div>
-
-                    {showGitHub
-                      ? <GitHubIntegration onAddProjects={handleAddGithubProjects} />
-                      : <ResumeBuilder onGenerate={handleGenerate} isLoading={isBuilding} />
-                    }
-                  </>
-                )
-              }
-            </>
-          )}
+        <div className="content-scrollable">
+          {hasResults && <Confetti score={activeScore} />}
+          {isActive && <AnalysisLoader currentStep={currentStep} />}
 
           {/* Error display */}
           {error && !isActive && (
@@ -340,99 +281,92 @@ export default function App() {
               </div>
             </div>
           )}
-        </div>
 
-        {/* ── RIGHT PANEL ── */}
-        <div className="split-right" ref={resultsRef}>
+          {currentView === 'home' && (
+            <DashboardHome 
+              onNavigate={navigateTo} 
+              hasData={hasResults || activeScore > 0} 
+              lastScore={activeScore} 
+            />
+          )}
 
-          {/* Idle state — feature showcase */}
-          {!hasResults && !isActive && (
-            <div className="split-right-idle">
-              <div className="idle-feature-header">
-                <div className="hero-tag" role="status">
-                  <span className="hero-tag-dot" aria-hidden="true" />
-                  Welcome back, {(user.displayName || user.name || 'User').split(' ')[0]}!
-                </div>
-                <h2 className="idle-feature-title">
-                  {mode === 'analyze' ? 'Upload your resume to begin' : 'Fill the form to generate your resume'}
-                </h2>
-                <p className="idle-feature-sub">
-                  {mode === 'analyze'
-                    ? 'Drag & drop your PDF or DOCX on the left — get a full ATS score report in seconds.'
-                    : 'Complete the multi-step builder form and get an ATS-optimized resume instantly.'
-                  }
-                </p>
-              </div>
+          {/* ── ANALYZE FLOW ── */}
+          {currentView === 'analyze' && (
+            <div className="analyze-flow-container">
+              {!result && !isActive && (
+                <ResumeUploader
+                  file={file}                    onFileChange={setFile}
+                  targetRole={targetRole}        onTargetRoleChange={setTargetRole}
+                  onAnalyze={handleAnalyze}      isLoading={isLoading}
+                />
+              )}
 
-              <div className="idle-feature-grid">
-                {IDLE_FEATURES.map(f => (
-                  <div key={f.title} className="idle-feature-card">
-                    <div className="idle-feature-icon" aria-hidden="true">{f.icon}</div>
-                    <div>
-                      <div className="idle-feature-name">{f.title}</div>
-                      <div className="idle-feature-desc">{f.desc}</div>
+              {result && !isLoading && (
+                <div className="analyze-step-3">
+                  <div className="results-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                      <button className="btn btn-outline" onClick={handleReset} type="button">
+                        ← Back
+                      </button>
+                      <h2 style={{ margin: 0 }}>Analysis Report</h2>
                     </div>
                   </div>
-                ))}
-              </div>
+                  <section className="results-section">
+                    <ScoreDashboard data={result} targetRole={analyzedRole} onSwitchMode={switchMode} onFixIt={() => setShowFixItModal(true)} />
+                    <div className="divider" style={{ margin: '40px 0' }} />
+                    <AnalysisPanels data={result} />
+                  </section>
+                </div>
+              )}
             </div>
           )}
 
-          {/* ── Analyze results ── */}
-          {result && !isLoading && (
-            <section className="results-section" id="results" aria-labelledby="results-heading">
-              <div className="container">
-                <div className="results-header">
-                  <h2 className="results-title" id="results-heading">
-                    {result.overall_score >= 85 ? '🎉' : '📋'} Analysis Report
-                    {result.ai_enhanced && <span className="ai-badge-inline">✨ AI</span>}
-                  </h2>
-                  <div className="results-header-btns no-print">
-                    <button className="btn btn-outline" onClick={handleReset}              type="button">↩ New Analysis</button>
-                    <button className="btn btn-outline" onClick={() => switchMode('build')} type="button">✨ Build Resume</button>
-                  </div>
-                </div>
-                <ScoreDashboard data={result} targetRole={analyzedRole} />
-                <div className="divider" />
-                <AnalysisPanels data={result} />
-
-                {/* AI Suggestions (from backend) */}
-                {result.ai_suggestions && (
-                  <div className="ai-suggestions-panel">
-                    <h3 className="ai-suggestions-title">
-                      <span aria-hidden="true">🤖</span> AI-Powered Insights
-                    </h3>
-                    <div className="ai-suggestions-content">
-                      {result.ai_suggestions}
+          {currentView === 'build' && (
+            <div className={`app-body${hasResults ? ' has-results' : ''}`}>
+              <div className="split-left">
+                {!buildResult ? (
+                  <ResumeBuilder onGenerate={handleGenerate} isLoading={isBuilding} />
+                ) : (
+                  <div className="split-left-sticky-bar">
+                    <div className="split-left-bar-emoji">✨</div>
+                    <div className="split-left-bar-title">Resume Generated</div>
+                    <div className="split-left-bar-btns">
+                      <button className="btn btn-primary" onClick={handleBuilderReset} type="button">🔄 Build Another</button>
                     </div>
                   </div>
                 )}
               </div>
-            </section>
-          )}
-
-          {/* ── Build results ── */}
-          {buildResult && !isBuilding && (
-            <section className="results-section" id="build-results" aria-labelledby="build-results-heading">
-              <div className="container">
-                <ResumeOutput
-                  data={buildResult}
-                  targetRole={buildRole}
-                  onReset={handleBuilderReset}
-                />
+              <div className="split-right">
+                {buildResult && !isBuilding && (
+                  <section className="results-section">
+                    <ResumeOutput data={buildResult} targetRole={buildRole} onReset={handleBuilderReset} />
+                  </section>
+                )}
               </div>
-            </section>
+            </div>
+          )}
+
+          {currentView === 'github' && (
+            <div className="container" style={{ maxWidth: '800px', marginTop: '40px' }}>
+              <GitHubIntegration onAddProjects={handleAddGithubProjects} />
+            </div>
+          )}
+
+          {currentView === 'settings' && (
+            <div className="container" style={{ padding: '60px 20px', textAlign: 'center' }}>
+              <h2>Settings</h2>
+              <p style={{ color: 'var(--text-secondary)', marginTop: '16px' }}>Configuration options will appear here.</p>
+            </div>
           )}
         </div>
-      </div>
-
-      <footer className="footer">
-        <div className="container">
-          <p className="footer-text">
-            Built with <span>♥</span> by ResumeIQ · 100% private — no data ever leaves your device.
-          </p>
-        </div>
-      </footer>
+      </main>
+      {showFixItModal && result && (
+        <ResumeFixIt
+          data={result}
+          onClose={() => setShowFixItModal(false)}
+          onApply={handleApplyFixes}
+        />
+      )}
     </div>
   );
 }
