@@ -1,10 +1,6 @@
-/**
- * Extract text from a PDF file using pdf.js
- */
 export async function extractPdfText(file) {
   const pdfjsLib = await import('pdfjs-dist');
-  
-  // Use the local worker from pdfjs-dist instead of a CDN
+
   pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
     'pdfjs-dist/build/pdf.worker.mjs',
     import.meta.url
@@ -25,9 +21,6 @@ export async function extractPdfText(file) {
   return fullText.trim();
 }
 
-/**
- * Extract text from a DOCX file using mammoth
- */
 export async function extractDocxText(file) {
   const mammoth = await import('mammoth');
   const arrayBuffer = await file.arrayBuffer();
@@ -35,9 +28,6 @@ export async function extractDocxText(file) {
   return result.value.trim();
 }
 
-/**
- * Extract text based on file type
- */
 export async function extractResumeText(file) {
   const ext = file.name.split('.').pop().toLowerCase();
   
@@ -52,9 +42,6 @@ export async function extractResumeText(file) {
   }
 }
 
-/**
- * Format file size into human-readable string
- */
 export function formatFileSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;

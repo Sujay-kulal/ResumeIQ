@@ -1,16 +1,3 @@
-/**
- * ============================================================
- * LOCAL RESUME ANALYSIS ENGINE
- * Zero API calls — runs entirely in the browser.
- * Implements deterministic ATS scoring rules:
- *   Skills Match  → 40%
- *   Experience    → 20%
- *   Projects      → 20%
- *   Formatting    → 20%
- * ============================================================
- */
-
-// ─── Predefined skill keyword sets per role ──────────────────
 export const ROLE_KEYWORDS = {
   'Frontend Developer': [
     'React', 'Vue', 'Angular', 'JavaScript', 'TypeScript', 'HTML', 'CSS', 'SASS',
@@ -85,7 +72,6 @@ export const ROLE_KEYWORDS = {
 
 export const ROLE_OPTIONS = Object.keys(ROLE_KEYWORDS);
 
-// ─── Scoring constants ────────────────────────────────────────
 const ACTION_VERBS = [
   'developed', 'built', 'designed', 'implemented', 'architected', 'engineered',
   'created', 'launched', 'deployed', 'optimized', 'reduced', 'increased',
@@ -116,14 +102,13 @@ const SECTION_HEADERS = [
 const QUANTIFIER_PATTERN = /\d+\s*(%|percent|x|times|users|customers|engineers|team|members|days|weeks|months|years|hours|minutes|seconds|ms|k\b|million|billion|\$|€|£|rupees?|inr)/i;
 const NUMBER_PATTERN = /\b\d{2,}\b/;
 
-// ─── STEP 1: Skill matching ───────────────────────────────────
 function matchSkills(text, roleKeywords) {
   const lower = text.toLowerCase();
   const matched = [];
   const missing = [];
 
   for (const kw of roleKeywords) {
-    // handle multi-word keywords: all words must be present near each other
+    
     const kwLower = kw.toLowerCase();
     if (lower.includes(kwLower)) {
       matched.push(kw);
@@ -136,14 +121,13 @@ function matchSkills(text, roleKeywords) {
   return { matched, missing, pct };
 }
 
-// ─── STEP 2: Extract bullet-like lines ───────────────────────
 function extractBullets(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 15);
-  // Prefer lines that start with bullet markers, dashes, or look like bullet points
+  
   return lines.filter(l =>
     l.startsWith('•') || l.startsWith('-') || l.startsWith('*') ||
     l.startsWith('→') || l.startsWith('▸') ||
-    /^[a-z]/i.test(l.slice(0, 1)) // also plain lines
+    /^[a-z]/i.test(l.slice(0, 1)) 
   ).map(l => l.replace(/^[•\-*→▸]\s*/, '').trim()).filter(l => l.length > 20);
 }
 
@@ -216,44 +200,36 @@ function scoreProjects(text) {
   const techMentioned = techKeywords.filter(t => lower.includes(t));
   score += Math.min(25, techMentioned.length * 3);
 
-  // Impact/outcome described
   const hasOutcome = QUANTIFIER_PATTERN.test(text) || NUMBER_PATTERN.test(text);
   if (hasOutcome) score += 15;
 
-  // Link to GitHub / live demo
   if (/github\.com|vercel\.app|netlify\.app|heroku\.com|demo|live\s+link/i.test(lower)) score += 5;
 
   return Math.min(100, score);
 }
 
-// ─── STEP 5: Score formatting ─────────────────────────────────
 function scoreFormatting(text, rawText) {
   let score = 50;
   const lower = text.toLowerCase();
 
-  // Section headers present
   const foundHeaders = SECTION_HEADERS.filter(h => lower.includes(h));
   score += Math.min(20, foundHeaders.length * 4);
 
-  // Bullet points present
   const bulletCount = (rawText.match(/^[\s]*[•\-*▸→]/gm) || []).length;
   if (bulletCount >= 5) score += 15;
   else if (bulletCount >= 2) score += 8;
 
-  // Length check (rough: 300-1200 words = ideal)
   const wordCount = rawText.split(/\s+/).filter(Boolean).length;
   if (wordCount >= 300 && wordCount <= 1200) score += 15;
   else if (wordCount < 150) score -= 15;
   else if (wordCount > 1800) score -= 10;
 
-  // Contact info
-  if (/[\w.]+@[\w.]+\.\w+/.test(rawText)) score += 5; // email
+  if (/[\w.]+@[\w.]+\.\w+/.test(rawText)) score += 5; 
   if (/linkedin\.com|github\.com/.test(lower)) score += 5;
 
   return Math.min(100, Math.max(0, score));
 }
 
-// ─── STEP 6: Score education ──────────────────────────────────
 function scoreEducation(text) {
   const lower = text.toLowerCase();
   let score = 40;
@@ -264,16 +240,14 @@ function scoreEducation(text) {
   if (/university|college|institute|school/i.test(lower)) score += 10;
   if (/\b(gpa|cgpa|grade)\s*[-:]?\s*\d/i.test(lower)) score += 10;
   if (/\b(honor|distinction|merit|gold medal|rank)\b/i.test(lower)) score += 10;
-  if (/\b(2[0-9]{3})\b/.test(lower)) score += 10; // has year
+  if (/\b(2[0-9]{3})\b/.test(lower)) score += 10; 
 
   return Math.min(100, score);
 }
 
-// ─── STEP 7: Build section feedback ───────────────────────────
 function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBullets) {
   const feedback = {};
 
-  // Skills
   if (skillMatch.pct >= 70) {
     feedback.skills = `Strong skill alignment — ${skillMatch.pct}% keyword match (${skillMatch.matched.length}/${skillMatch.matched.length + skillMatch.missing.length} keywords found). Consider grouping skills by category (Languages, Frameworks, Tools) for better ATS parsing.`;
   } else if (skillMatch.pct >= 40) {
@@ -282,7 +256,6 @@ function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBull
     feedback.skills = `Low skill match at ${skillMatch.pct}% — only ${skillMatch.matched.length} of ${skillMatch.matched.length + skillMatch.missing.length} expected keywords detected. Significantly expand your Skills section with role-specific technologies.`;
   }
 
-  // Experience
   if (expScore >= 75) {
     feedback.experience = `Experience section demonstrates strong use of action verbs and quantified results. Well-structured bullet points that communicate clear impact. Ensure each role has 3–5 bullets minimum.`;
   } else if (expScore >= 50) {
@@ -291,7 +264,6 @@ function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBull
     feedback.experience = `Experience section heavily relies on vague, passive language. Rewrite all bullets starting with strong action verbs. Add quantifiable results to every bullet — recruiters spend 7 seconds scanning; make each line count.`;
   }
 
-  // Projects
   if (projectScore >= 75) {
     feedback.projects = `Projects section clearly lists technologies used and describes outcomes. Good technical specificity. Consider adding links (GitHub/live demo) and user count or performance metrics for stronger impact.`;
   } else if (projectScore >= 50) {
@@ -300,7 +272,6 @@ function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBull
     feedback.projects = `Projects section is weak or missing. Add 2–3 significant projects with clear tech stack and impact. Even personal or academic projects count — they demonstrate initiative and practical skills.`;
   }
 
-  // Formatting
   if (formatScore >= 75) {
     feedback.formatting = `Formatting is clean and ATS-friendly with clear section headers and proper use of bullet points. Resume length appears appropriate. Avoid tables, columns, or graphics which confuse ATS parsers.`;
   } else if (formatScore >= 50) {
@@ -312,7 +283,6 @@ function buildFeedback(skillMatch, expScore, projectScore, formatScore, weakBull
   return feedback;
 }
 
-// ─── STEP 8: Generate bullet rewrites ────────────────────────
 const REWRITE_TEMPLATES = [
   (orig, tech) => `Developed and deployed ${tech ? tech + ' solution' : 'full-stack application'} that improved operational efficiency by 30%, reducing manual processing time by 5+ hours per week.`,
   (orig, tech) => `Implemented ${tech || 'automated'} pipeline using ${tech || 'modern tooling'}, reducing error rate by 40% and increasing team throughput by 2×.`,
@@ -344,13 +314,11 @@ function rewriteBullets(weakBullets) {
   });
 }
 
-// ─── STEP 9: Generate suggested skills ───────────────────────
 function suggestSkills(missing) {
-  // Return top missing keywords (already calculated)
+  
   return missing.slice(0, 10);
 }
 
-// ─── STEP 10: Summary ─────────────────────────────────────────
 function buildSummary(skillPct, expScore, projectScore, formatScore, eduScore, matched, missing) {
   const strengths = [];
   const improvements = [];
@@ -394,41 +362,30 @@ function buildSummary(skillPct, expScore, projectScore, formatScore, eduScore, m
   };
 }
 
-// ─── MAIN EXPORT ─────────────────────────────────────────────
-/**
- * Analyze resume text locally — no API, no network.
- * Returns the same JSON shape as the previous Gemini-based analyzer.
- */
 export async function analyzeResume(resumeText, _apiKey, targetRole = 'Software Engineer (General)') {
   const roleKeywords = ROLE_KEYWORDS[targetRole] || ROLE_KEYWORDS['Software Engineer (General)'];
   const text = resumeText;
   const lower = text.toLowerCase();
 
-  // 1. Skill matching
   const skillData = matchSkills(lower, roleKeywords);
 
-  // 2. Extract bullets
   const bullets = extractBullets(text);
 
-  // 3. Score sections
   const expData = scoreExperience(text, bullets);
   const projectScore = scoreProjects(text);
   const formatScore = scoreFormatting(lower, text);
   const eduScore = scoreEducation(text);
 
-  // 4. Compute scores
-  const skillScore = Math.round(40 + skillData.pct * 0.6); // 40–100 range
+  const skillScore = Math.round(40 + skillData.pct * 0.6); 
   const expScore = expData.score;
   const atsScore = Math.round(skillScore * 0.40 + expScore * 0.20 + projectScore * 0.20 + formatScore * 0.20);
   const overallScore = atsScore;
 
-  // 5. Build outputs
   const section_feedback = buildFeedback(skillData, expScore, projectScore, formatScore, expData.weakBullets);
   const improved_bullets = rewriteBullets(expData.weakBullets);
   const summary = buildSummary(skillData.pct, expScore, projectScore, formatScore, eduScore, skillData.matched, skillData.missing);
   const suggested_skills = suggestSkills(skillData.missing);
 
-  // 6. Keyword density — count appearances of each matched keyword
   const keyword_density = {};
   for (const kw of skillData.matched) {
     const regex = new RegExp(kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
@@ -436,7 +393,6 @@ export async function analyzeResume(resumeText, _apiKey, targetRole = 'Software 
     keyword_density[kw.toLowerCase()] = matches ? matches.length : 1;
   }
 
-  // 7. Return full shape
   return {
     overall_score: overallScore,
     skill_match_percentage: skillData.pct,

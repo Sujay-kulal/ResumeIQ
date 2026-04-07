@@ -23,13 +23,13 @@ export default function AnalysisLoader({ currentStep }) {
   return (
     <div className="loader-overlay" role="status" aria-live="polite" aria-label="Analyzing resume...">
       <div className="loader-content">
-        {/* Logo */}
+        {}
         <div className="loader-logo">
           <div className="loader-logo-icon" aria-hidden="true">✦</div>
           <span className="loader-logo-text">ResumeIQ</span>
         </div>
 
-        {/* Spinner */}
+        {}
         <div className="loader-spinner" aria-hidden="true">
           <div className="loader-spinner-ring" />
           <div className="loader-spinner-ring" />
@@ -39,7 +39,7 @@ export default function AnalysisLoader({ currentStep }) {
         <h2 className="loader-title">Analyzing Your Resume</h2>
         <p className="loader-subtitle">Running local ATS analysis engine...</p>
 
-        {/* Progress bar */}
+        {}
         <div style={{
           width: '100%', height: 4, background: 'rgba(255,255,255,0.06)',
           borderRadius: 2, overflow: 'hidden', margin: '0 0 20px'

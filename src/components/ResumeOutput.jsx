@@ -112,7 +112,7 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
         </div>
       </div>
 
-      {/* Template Selector */}
+      {}
       <div className="template-selector no-print" role="group" aria-label="Choose resume template">
         <div className="template-selector-label">
           <span>🎨</span> Choose Template for PDF Export
@@ -144,7 +144,7 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
       </div>
 
       <div className="resume-output-grid">
-        {/* Resume preview — collapsible on mobile */}
+        {}
         <div className="resume-output-col-left">
           <details className="resume-collapsible" open>
             <summary>📄 Generated Resume Preview</summary>
@@ -159,11 +159,10 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
           </details>
         </div>
 
-
-        {/* SECTION 2 */}
+        {}
         <div className="resume-output-col-right">
 
-          {/* Score card */}
+          {}
           <div className="ats-score-card">
             <div className="ats-score-header">
               <span className="ats-score-label">SECTION 2: ATS SCORE</span>
@@ -203,7 +202,7 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
             </div>
           </div>
 
-          {/* Missing Keywords */}
+          {}
           <div className="panel">
             <div className="panel-header">
               <div className="panel-icon" style={{ background: 'rgba(239,68,68,0.12)' }}>❌</div>
@@ -220,7 +219,7 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
             </div>
           </div>
 
-          {/* Bullet Fixes with per-bullet copy */}
+          {}
           {improved_bullets.length > 0 && (
             <div className="panel">
               <div className="panel-header">
@@ -247,7 +246,7 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
             </div>
           )}
 
-          {/* Suggestions */}
+          {}
           <div className="panel">
             <div className="panel-header">
               <div className="panel-icon" style={{ background: 'rgba(96,165,250,0.12)' }}>💡</div>
@@ -271,7 +270,7 @@ export default function ResumeOutput({ data, targetRole, onReset }) {
             )}
           </div>
 
-          {/* Strengths */}
+          {}
           {summary.strengths?.length > 0 && (
             <div className="panel">
               <div className="panel-header">

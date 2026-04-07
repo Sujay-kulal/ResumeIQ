@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-/* Score a repo's quality (for "recommended" logic) */
 function scoreRepo(repo) {
   let s = 0;
   if (repo.description)                s += 2;
@@ -79,7 +78,7 @@ export default function GitHubIntegration({ onAddProjects }) {
           Fetch your public repositories and select which ones to include in your resume
         </p>
 
-        {/* Input row */}
+        {}
         <div className="github-input-row">
           <input
             id="github-username-input"
@@ -111,7 +110,7 @@ export default function GitHubIntegration({ onAddProjects }) {
           </div>
         )}
 
-        {/* Loading skeleton */}
+        {}
         {loading && (
           <div className="github-loading" aria-live="polite">
             <div className="github-spinner" aria-hidden="true" />
@@ -121,17 +120,17 @@ export default function GitHubIntegration({ onAddProjects }) {
           </div>
         )}
 
-        {/* Empty state */}
+        {}
         {fetched && !loading && repos.length === 0 && (
           <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px 0' }}>
             No public repositories found for this account.
           </p>
         )}
 
-        {/* Repos grid */}
+        {}
         {fetched && repos.length > 0 && (
           <>
-            {/* Stats row */}
+            {}
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16, flexWrap: 'wrap' }}>
               <span style={{ font: '0.82rem/1 var(--font-sans)', color: 'var(--text-muted)' }}>
                 {repos.length} repositories found
@@ -155,9 +154,9 @@ export default function GitHubIntegration({ onAddProjects }) {
                     tabIndex={0}
                     onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && toggleRepo(repo.id)}
                   >
-                    {/* Header row: checkbox + name + badges */}
+                    {}
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
-                      {/* Enhanced checkbox */}
+                      {}
                       <div className="github-checkbox-v2" aria-hidden="true">
                         {isSelected ? '✓' : ''}
                       </div>

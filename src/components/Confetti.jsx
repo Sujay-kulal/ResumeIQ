@@ -8,7 +8,6 @@ export default function Confetti({ score }) {
     if (score >= 85 && !firedRef.current) {
       firedRef.current = true;
 
-      // First burst
       confetti({
         particleCount: 120,
         spread: 80,
@@ -17,13 +16,11 @@ export default function Confetti({ score }) {
         zIndex: 9999,
       });
 
-      // Side cannons
       setTimeout(() => {
         confetti({ particleCount: 60, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: ['#7c3aed', '#a855f7'], zIndex: 9999 });
         confetti({ particleCount: 60, angle: 120, spread: 55, origin: { x: 1, y: 0.6 }, colors: ['#2563eb', '#60a5fa'], zIndex: 9999 });
       }, 300);
 
-      // Final burst
       setTimeout(() => {
         confetti({ particleCount: 80, spread: 100, origin: { x: 0.5, y: 0.4 }, gravity: 0.7, scalar: 1.2, zIndex: 9999 });
       }, 700);

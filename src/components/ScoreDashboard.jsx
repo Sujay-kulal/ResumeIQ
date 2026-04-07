@@ -14,7 +14,6 @@ function getBarClass(score) {
   return 'bar-poor';
 }
 
-/** Returns the gradient IDs and colors based on score tier */
 function getRingGradient(score) {
   if (score >= 70) return { id: 'ring-green', c1: '#10b981', c2: '#34d399', tier: 'tier-green' };
   if (score >= 40) return { id: 'ring-amber', c1: '#f59e0b', c2: '#fbbf24', tier: 'tier-amber' };
@@ -30,7 +29,6 @@ const SECTION_META = {
   formatting: { label: 'Formatting',    icon: '✨', color: '#a855f7', weight: '20%' },
 };
 
-/** Animated counter + color-coded ring */
 function ScoreRing({ score }) {
   const circumference = 502;
   const fillRef = useRef(null);
@@ -64,7 +62,7 @@ function ScoreRing({ score }) {
             <stop offset="0%" stopColor={grad.c1} />
             <stop offset="100%" stopColor={grad.c2} />
           </linearGradient>
-          {/* Keep purple gradient as well for compatibility */}
+          {}
           <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#7c3aed" />
             <stop offset="100%" stopColor="#2563eb" />
@@ -92,7 +90,6 @@ function ScoreRing({ score }) {
   );
 }
 
-/** Skill match donut */
 function SkillMatchGauge({ pct = 0, matchedCount = 0, totalCount = 0 }) {
   const circumference = 282;
   const fillRef = useRef(null);
@@ -217,7 +214,7 @@ export default function ScoreDashboard({ data, targetRole, onSwitchMode, onFixIt
 
   const scrollToFixes = () => {
     document.getElementById('tabpanel-fixes')?.closest('.tabs-root')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    // Click the fixes tab
+    
     document.getElementById('tab-fixes')?.click();
   };
 
@@ -228,12 +225,12 @@ export default function ScoreDashboard({ data, targetRole, onSwitchMode, onFixIt
 
   return (
     <div className="results-3col">
-      {/* ── LEFT: Score Ring + Action Panel ── */}
+      {}
       <div className="results-3col-left">
         <div className="score-hero-card" style={{ flexDirection: 'column', gap: 20, padding: '28px 20px', alignItems: 'center', textAlign: 'center' }}>
           <ScoreRing score={overall_score} />
 
-          {/* Grade badge */}
+          {}
           <div
             className="score-hero-grade"
             style={{ background: grade.bg, color: grade.color }}
@@ -242,7 +239,7 @@ export default function ScoreDashboard({ data, targetRole, onSwitchMode, onFixIt
             {grade.label}
           </div>
 
-          {/* Skill match */}
+          {}
           <div className="skill-match-section">
             <SkillMatchGauge
               pct={Math.round(skill_match_percentage)}
@@ -258,7 +255,7 @@ export default function ScoreDashboard({ data, targetRole, onSwitchMode, onFixIt
           </div>
         </div>
 
-        {/* ── ACTION PANEL ── */}
+        {}
         <div className="action-panel">
           <div className="action-panel-title">Quick Actions</div>
           <div className="action-panel-btns">
@@ -306,15 +303,15 @@ export default function ScoreDashboard({ data, targetRole, onSwitchMode, onFixIt
         </div>
       </div>
 
-      {/* ── RIGHT: Info + Section Scores ── */}
+      {}
       <div>
-        {/* Score summary card */}
+        {}
         <div className="score-hero-card" style={{ marginBottom: 24 }}>
           <div className="score-hero-info" style={{ flex: 1 }}>
             <h3 className="score-hero-title">ATS Analysis Report</h3>
             <p className="score-hero-desc">{getDescription(overall_score)}</p>
 
-            {/* Weight formula */}
+            {}
             <div className="score-formula" aria-label="Scoring formula">
               <span className="formula-piece" style={{ color: '#7c3aed' }}>Skills×40%</span>
               <span className="formula-op">+</span>
@@ -327,7 +324,7 @@ export default function ScoreDashboard({ data, targetRole, onSwitchMode, onFixIt
           </div>
         </div>
 
-        {/* Section Scores Grid */}
+        {}
         <div className="section-scores-grid" role="list" aria-label="Section scores">
           {Object.entries(section_scores).map(([key, score], i) => (
             <div key={key} role="listitem">

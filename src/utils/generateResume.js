@@ -1,16 +1,6 @@
-/**
- * ============================================================
- * RESUME GENERATOR ENGINE
- * Part 1: Builds an ATS-optimized resume from raw user inputs.
- * Part 2: Scores it using the local ATS scoring rules.
- * Part 3: Optionally enhances via backend Gemini AI.
- * ============================================================
- */
-
 import { analyzeResume, ROLE_KEYWORDS } from './analyzeResume.js';
-import { apiGenerateResume } from '../api.js';
+import { apiGenerateResume } from '../services/api.js';
 
-// ─── Action Verb Library (strong verbs by domain) ────────────
 const ACTION_VERBS = [
   'Engineered', 'Built', 'Designed', 'Developed', 'Implemented',
   'Architected', 'Automated', 'Optimized', 'Streamlined', 'Launched',
@@ -18,7 +8,6 @@ const ACTION_VERBS = [
   'Reduced', 'Increased', 'Improved', 'Spearheaded', 'Refactored',
 ];
 
-// ─── Vague phrase replacements ────────────────────────────────
 const VAGUE_MAP = {
   'worked on':       'Developed',
   'helped with':     'Contributed to',
@@ -34,13 +23,9 @@ const VAGUE_MAP = {
   'worked as':       'Served as',
 };
 
-/**
- * Replace vague phrases and ensure bullet starts with an action verb.
- */
 function strengthenBullet(bullet, index = 0) {
   let b = bullet.trim();
 
-  // Replace vague openings
   for (const [vague, strong] of Object.entries(VAGUE_MAP)) {
     const regex = new RegExp(`^${vague}\\s+`, 'i');
     if (regex.test(b)) {
@@ -49,25 +34,18 @@ function strengthenBullet(bullet, index = 0) {
     }
   }
 
-  // If no action verb detected at start, prepend one
   const startsWithVerb = ACTION_VERBS.some(v => b.toLowerCase().startsWith(v.toLowerCase()));
   if (!startsWithVerb) {
     const verb = ACTION_VERBS[index % ACTION_VERBS.length];
     b = `${verb} ${b.charAt(0).toLowerCase()}${b.slice(1)}`;
   }
 
-  // Truncate if too long (keep concise ~20 words)
   const words = b.split(' ');
   if (words.length > 22) b = words.slice(0, 22).join(' ') + '...';
 
   return b;
 }
 
-
-
-/**
- * Parse experience entries (format: "Role | Company | Duration\nbullets")
- */
 function parseExperience(expText) {
   const blocks = expText.split(/\n\s*\n/).filter(b => b.trim());
   return blocks.map(block => {
@@ -117,11 +95,9 @@ function formatSkills(skillsText) {
   return lines.length ? lines.join('\n') : raw;
 }
 
-// ─── PART 1: Build Resume Text (local) ─────────────────────────
 export function buildResumeText({ name, contact, summary, skills, experience, projects, education, achievements }) {
   const lines = [];
 
-  // Header
   lines.push(name.trim().toUpperCase());
   lines.push(contact.trim());
   lines.push('');
@@ -176,29 +152,27 @@ export function buildResumeText({ name, contact, summary, skills, experience, pr
   return lines.join('\n');
 }
 
-// ─── PART 2: Generate + Analyze (with backend fallback) ──────
 export async function generateAndAnalyze(userData) {
-  // Try backend AI generation first
+  
   let aiResult = null;
   try {
     aiResult = await apiGenerateResume(userData);
   } catch {
-    // Backend unavailable — that's fine, use local
+    
   }
 
   let resumeText;
   let aiSuggestions = [];
 
   if (aiResult && aiResult.resumeText && aiResult.ai_generated) {
-    // Use AI-generated resume text
+    
     resumeText = aiResult.resumeText;
     aiSuggestions = aiResult.suggestions || [];
   } else {
-    // Fallback: use local template-based generation
+    
     resumeText = buildResumeText(userData);
   }
 
-  // Always run local ATS scoring on the final resume
   const analysisResult = await analyzeResume(resumeText, null, userData.targetRole);
 
   return {

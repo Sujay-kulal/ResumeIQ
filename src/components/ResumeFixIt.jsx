@@ -1,28 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function ResumeFixIt({ data, onClose, onApply }) {
   const { improved_bullets = [], missing_keywords = [] } = data;
 
-  // State to track accepted/edited bullets
-  // Initial state: all bullets pre-filled with the "improved" version and marked as "accepted"
   const [bulletsState, setBulletsState] = useState(() => 
     improved_bullets.map((b, i) => ({
       id: i,
       original: b.original,
       text: b.improved,
-      status: 'accepted' // 'accepted', 'rejected', 'editing'
+      status: 'accepted' 
     }))
   );
 
-  // State for missing skills to append
   const [selectedSkills, setSelectedSkills] = useState(() => 
     missing_keywords.reduce((acc, kw) => {
-      acc[kw] = true; // pre-select all missing keywords
+      acc[kw] = true; 
       return acc;
     }, {})
   );
 
-  const [currentTab, setCurrentTab] = useState('bullets'); // 'bullets' | 'skills'
+  const [currentTab, setCurrentTab] = useState('bullets'); 
 
   const handleAction = (id, action) => {
     setBulletsState(prev => prev.map(b => b.id === id ? { ...b, status: action } : b));

@@ -31,11 +31,10 @@ export default function DashboardHome({ onNavigate, hasData, lastScore }) {
     );
   }
 
-  // Returning user state
   return (
     <div className="dashboard-home returning-state">
       <div className="dashboard-grid">
-        {/* Last Resume Card */}
+        {}
         <div className="dashboard-card last-resume-card">
           <div className="last-resume-header">
             <h3>Your Last Resume</h3>
@@ -70,7 +69,7 @@ export default function DashboardHome({ onNavigate, hasData, lastScore }) {
           </div>
         </div>
 
-        {/* Quick Actions */}
+        {}
         <div className="dashboard-card quick-actions-card">
           <h3>Quick Actions</h3>
           <div className="quick-actions-list">

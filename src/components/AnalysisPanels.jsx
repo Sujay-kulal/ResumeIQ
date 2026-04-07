@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-/* ── Copy button ─────────────────────────────────────────── */
 function CopyButton({ text }) {
   const [copied, setCopied] = useState(false);
   const handle = () => {
@@ -21,7 +20,6 @@ function CopyButton({ text }) {
   );
 }
 
-/* ── Tab system ─────────────────────────────────────────── */
 function Tabs({ tabs, children }) {
   const [active, setActive] = useState(0);
   return (
@@ -81,9 +79,9 @@ export default function AnalysisPanels({ data }) {
 
   return (
     <Tabs tabs={tabs}>
-      {/* ── Tab 1: Overview ── */}
+      {}
       <div>
-        {/* Section feedback cards */}
+        {}
         {Object.keys(section_feedback).length > 0 && (
           <div className="section-feedback-grid" style={{ marginBottom: 24 }}>
             {Object.entries(FEEDBACK_META).map(([key, meta]) => {
@@ -104,7 +102,7 @@ export default function AnalysisPanels({ data }) {
           </div>
         )}
 
-        {/* Summary */}
+        {}
         <div className="panel">
           <div className="panel-header">
             <div className="panel-icon" style={{ background: 'rgba(124,58,237,0.12)' }}>📊</div>
@@ -135,9 +133,9 @@ export default function AnalysisPanels({ data }) {
         </div>
       </div>
 
-      {/* ── Tab 2: Skills Gap ── */}
+      {}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        {/* Matched */}
+        {}
         {matched_keywords.length > 0 && (
           <div className="panel">
             <div className="panel-header">
@@ -164,7 +162,7 @@ export default function AnalysisPanels({ data }) {
           </div>
         )}
 
-        {/* Missing */}
+        {}
         <div className="panel">
           <div className="panel-header">
             <div className="panel-icon" style={{ background: 'rgba(239,68,68,0.12)' }}>🔍</div>
@@ -183,7 +181,7 @@ export default function AnalysisPanels({ data }) {
           </div>
         </div>
 
-        {/* Suggested */}
+        {}
         <div className="panel">
           <div className="panel-header">
             <div className="panel-icon" style={{ background: 'rgba(245,158,11,0.12)' }}>💡</div>
@@ -201,9 +199,9 @@ export default function AnalysisPanels({ data }) {
         </div>
       </div>
 
-      {/* ── Tab 3: Experience Fixes ── */}
+      {}
       <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        {/* Weak points */}
+        {}
         <div className="panel">
           <div className="panel-header">
             <div className="panel-icon" style={{ background: 'rgba(239,68,68,0.12)' }}>⚠️</div>
@@ -218,7 +216,7 @@ export default function AnalysisPanels({ data }) {
           )}
         </div>
 
-        {/* AI rewrites */}
+        {}
         {improved_bullets.length > 0 && (
           <div className="panel">
             <div className="panel-header">

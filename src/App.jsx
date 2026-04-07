@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { onAuthChange, signOutUser } from './firebase';
-import { apiAnalyzeResume } from './api';
+import { onAuthChange, signOutUser } from './services/firebase';
+import { apiAnalyzeResume } from './services/api';
 import Sidebar           from './components/Sidebar';
 import Topbar            from './components/Topbar';
 import DashboardHome     from './components/DashboardHome';
@@ -23,7 +23,7 @@ import { generateAndAnalyze } from './utils/generateResume';
 const THEME_KEY = 'resumeiq_theme';
 
 export default function App() {
-  // ── Theme ──────────────────────────────────────────────────────
+  
   const [theme, setTheme] = useState(() => localStorage.getItem(THEME_KEY) || 'dark');
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -31,19 +31,15 @@ export default function App() {
   }, [theme]);
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark');
 
-  // ── Auth (Firebase) ─────────────────────────────────────────────
   const [user,      setUser]      = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const [authView,  setAuthView]  = useState('login'); // 'login' | 'signup'
+  const [authView,  setAuthView]  = useState('login'); 
 
-  // showAuth: controls whether to show auth page vs landing page (for logged-out users)
   const [showAuth,  setShowAuth]  = useState(false);
   const [showFixItModal, setShowFixItModal] = useState(false);
-  
-  // ── Mode / View ────────────────────────────────────────────────
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'analyze', 'build', 'github', 'settings'
 
-  // Listen for Firebase auth state changes
+  const [currentView, setCurrentView] = useState('home'); 
+
   useEffect(() => {
     const unsub = onAuthChange((firebaseUser) => {
       if (firebaseUser) {
@@ -71,7 +67,7 @@ export default function App() {
     try {
       await signOutUser();
     } catch {
-      // Firebase sign-out failed, clear locally anyway
+      
     }
     setUser(null);
     setShowAuth(false);
@@ -80,10 +76,6 @@ export default function App() {
     setError(null);
   };
 
-  // Legacy cleanups removed 
-
-
-  // ── Analyzer state ──────────────────────────────────────────────
   const [file,         setFile]         = useState(null);
   const [targetRole,   setTargetRole]   = useState('Software Engineer (General)');
   const [isLoading,    setIsLoading]    = useState(false);
@@ -97,8 +89,6 @@ export default function App() {
   const [buildResult,  setBuildResult]  = useState(null);
   const [buildRole,    setBuildRole]    = useState('');
 
-  // ── GitHub tab states removed ────────────────
-
   const resultsRef = useRef(null);
   const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
@@ -111,7 +101,6 @@ export default function App() {
     }
   };
 
-  // ── Analyze ─────────────────────────────────────────────────────
   const handleAnalyze = async (resolvedRole) => {
     if (!file) return;
     const role = resolvedRole || targetRole;
@@ -122,21 +111,18 @@ export default function App() {
       if (!resumeText || resumeText.length < 50)
         throw new Error('Could not extract readable text. Try a PDF or DOCX with selectable text.');
 
-      // Step 2: Run local analysis (instant)
       setCurrentStep(2); await sleep(200);
       setCurrentStep(3);
       const localResult = await analyzeResume(resumeText, null, role);
 
-      // Step 3: Try AI-enhanced analysis from backend (non-blocking)
       setCurrentStep(4);
       let aiResult = null;
       try {
         aiResult = await apiAnalyzeResume(resumeText, role);
       } catch {
-        // Backend unavailable — local result is fine
+        
       }
 
-      // Merge: use local as base, overlay AI suggestions if available
       let finalResult = localResult;
       if (aiResult && !aiResult.parse_error && aiResult.ai_enhanced) {
         finalResult = {
@@ -214,7 +200,6 @@ export default function App() {
   const hasResults  = !!(result || buildResult);
   const isActive    = isLoading || isBuilding;
 
-  // ── Auth loading state ──────────────────────────────────────────
   if (!authReady) {
     return (
       <div className="auth-page">
@@ -232,7 +217,6 @@ export default function App() {
     );
   }
 
-  // ── Not logged in → Landing or Auth ────────────────────────────
   if (!user) {
     if (!showAuth) {
       return (
@@ -268,7 +252,7 @@ export default function App() {
           {hasResults && <Confetti score={activeScore} />}
           {isActive && <AnalysisLoader currentStep={currentStep} />}
 
-          {/* Error display */}
+          {}
           {error && !isActive && (
             <div className="container" style={{ paddingBottom: '40px' }}>
               <div className="error-card" role="alert">
@@ -290,7 +274,7 @@ export default function App() {
             />
           )}
 
-          {/* ── ANALYZE FLOW ── */}
+          {}
           {currentView === 'analyze' && (
             <div className="analyze-flow-container">
               {!result && !isActive && (

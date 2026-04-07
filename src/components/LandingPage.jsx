@@ -16,7 +16,6 @@ const STEPS = [
   { num: '04', title: 'Fix & Improve',        desc: 'Apply AI-suggested rewrites and keyword additions.' },
 ];
 
-/** Animated score ring used in hero */
 function HeroScoreRing() {
   const circumference = 502;
   const fillRef = useRef(null);
@@ -89,12 +88,12 @@ function HeroScoreRing() {
 export default function LandingPage({ onAnalyze, onBuild }) {
   return (
     <div className="lp-page">
-      {/* Ambient orbs */}
+      {}
       <div className="lp-orb lp-orb-1" aria-hidden="true" />
       <div className="lp-orb lp-orb-2" aria-hidden="true" />
       <div className="lp-orb lp-orb-3" aria-hidden="true" />
 
-      {/* ── NAVBAR ──────────────────────────────────────────── */}
+      {}
       <header className="lp-nav" role="banner">
         <div className="lp-nav-inner">
           <div className="lp-logo">
@@ -117,10 +116,10 @@ export default function LandingPage({ onAnalyze, onBuild }) {
         </div>
       </header>
 
-      {/* ── HERO ──────────────────────────────────────────────── */}
+      {}
       <section className="lp-hero" id="hero" aria-labelledby="lp-heading">
         <div className="lp-hero-inner">
-          {/* Left: text */}
+          {}
           <div className="lp-hero-text">
             <div className="hero-tag" role="status">
               <span className="hero-tag-dot" aria-hidden="true" />
@@ -139,7 +138,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
               Full score report in under 2 seconds — no signup, no data stored.
             </p>
 
-            {/* Trust signals */}
+            {}
             <div className="lp-trust-row" role="list" aria-label="Trust signals">
               <div className="lp-trust-item" role="listitem">
                 <span aria-hidden="true">🔒</span> Privacy-first: No data stored
@@ -152,7 +151,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
               </div>
             </div>
 
-            {/* CTA buttons */}
+            {}
             <div className="lp-cta-group">
               <button
                 id="lp-analyze-btn"
@@ -175,7 +174,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
             </div>
           </div>
 
-          {/* Right: visual */}
+          {}
           <div className="lp-hero-visual" aria-hidden="true">
             <div className="lp-visual-card">
               <div className="lp-visual-card-header">
@@ -192,7 +191,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
               </div>
             </div>
 
-            {/* Floating badge */}
+            {}
             <div className="lp-float-badge lp-float-badge-tl">
               <span style={{ color: '#10b981', fontWeight: 800, fontSize: '1.1rem' }}>+34</span>
               <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>score boost</span>
@@ -204,7 +203,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
         </div>
       </section>
 
-      {/* ── STATS BAR ─────────────────────────────────────────── */}
+      {}
       <div className="lp-stats-bar" role="list" aria-label="Platform statistics">
         {[
           { value: '6+',   label: 'Dimensions Scored' },
@@ -219,7 +218,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
         ))}
       </div>
 
-      {/* ── HOW IT WORKS ──────────────────────────────────────── */}
+      {}
       <section className="lp-how-section" id="how-it-works" aria-labelledby="how-heading">
         <div className="lp-section-inner">
           <div className="lp-section-tag">How It Works</div>
@@ -237,7 +236,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
         </div>
       </section>
 
-      {/* ── FEATURES ──────────────────────────────────────────── */}
+      {}
       <section className="lp-features-section" id="features" aria-labelledby="features-heading">
         <div className="lp-section-inner">
           <div className="lp-section-tag">Features</div>
@@ -254,7 +253,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
         </div>
       </section>
 
-      {/* ── FINAL CTA ─────────────────────────────────────────── */}
+      {}
       <section className="lp-final-cta" aria-labelledby="final-cta-heading">
         <div className="lp-final-inner">
           <h2 className="lp-final-title" id="final-cta-heading">Ready to fix your resume?</h2>
@@ -273,7 +272,7 @@ export default function LandingPage({ onAnalyze, onBuild }) {
         </div>
       </section>
 
-      {/* ── FOOTER ────────────────────────────────────────────── */}
+      {}
       <footer className="lp-footer">
         <div className="lp-footer-inner">
           <div className="lp-footer-logo">

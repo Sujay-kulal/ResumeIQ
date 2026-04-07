@@ -1,12 +1,3 @@
-/**
- * ============================================================
- * REAL-TIME RESUME INPUT CORRECTION ENGINE
- * Fixes grammar, replaces weak phrases, improves tone.
- * 100% local — no API calls.
- * ============================================================
- */
-
-// ─── Weak phrase → strong action verb replacements ───────────
 const WEAK_REPLACEMENTS = [
   [/^worked on\s+/i,          'Developed '],
   [/^was working on\s+/i,     'Developed '],
@@ -38,7 +29,6 @@ const WEAK_REPLACEMENTS = [
   [/^dealt with\s+/i,         'Resolved '],
 ];
 
-// ─── Strong action verbs to detect (no replacement needed) ───
 const STRONG_VERBS = [
   'Engineered', 'Architected', 'Developed', 'Built', 'Designed',
   'Implemented', 'Optimized', 'Automated', 'Deployed', 'Launched',
@@ -51,19 +41,17 @@ const STRONG_VERBS = [
   'Supported', 'Handled', 'Established', 'Drove', 'Achieved',
 ];
 
-// ─── Grammar fixups ──────────────────────────────────────────
 const GRAMMAR_PATTERNS = [
-  // Fix double spaces
+  
   [/  +/g, ' '],
-  // Fix comma spacing
+  
   [/\s+,/g, ','],
   [/,(?=[^\s])/g, ', '],
-  // Lowercase "i " → "I " in the middle of sentence
+  
   [/\bi\b/g, 'I'],
-  // Fix "to to", "a a" etc.
+  
   [/\b(\w+)\s+\1\b/gi, '$1'],
-  // Fix trailing period in bullets (optional)
-  // Remove trailing whitespace
+
   [/\s+$/gm, ''],
 ];
 
@@ -120,21 +108,16 @@ function correctBullet(line) {
   // Skip if it's a header line (contains | separator — Role | Company | Date)
   if (content.includes('|')) return line;
 
-  // Skip very short lines (might be section headers or dates)
   if (content.split(' ').length < 3) return line;
 
-  // Capitalize first letter
   content = capitalize(content);
 
-  // Replace weak phrases
   if (!startsWithStrongVerb(content)) {
     content = replacWeakPhrase(content);
   }
 
-  // Apply grammar fixes
   content = applyGrammar(content);
 
-  // Reconstruct with original indent + bullet
   const indent = line.match(/^(\s*)/)?.[1] || '';
   return `${indent}${bulletPrefix}${content}`;
 }
@@ -176,20 +159,17 @@ export function correctInput(input, fieldType = 'general') {
       continue;
     }
 
-    // For experience/projects: treat non-empty lines as potential bullets
     if (!trimmed) {
       correctedLines.push(line);
       continue;
     }
 
-    // Header lines (Role | Company | Date) — skip correction
     if (trimmed.includes('|') && !trimmed.startsWith('•') && !trimmed.startsWith('-')) {
       const fixed = capitalize(trimmed);
       correctedLines.push(fixed);
       continue;
     }
 
-    // Bullet lines
     const fixed = correctBullet(line);
     if (fixed.trim() !== line.trim() && trimmed.length > 5) {
       changes.push(`"${trimmed.slice(0, 35)}…"  →  stronger`);
@@ -203,9 +183,6 @@ export function correctInput(input, fieldType = 'general') {
   return { corrected, changed, changes: changes.slice(0, 5) };
 }
 
-/**
- * Quick single-line correction (for summary field).
- */
 export function correctLine(line) {
   return correctInput(line, 'summary').corrected;
 }

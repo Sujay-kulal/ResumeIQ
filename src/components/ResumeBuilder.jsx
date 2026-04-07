@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { ROLE_OPTIONS } from '../utils/analyzeResume';
 import { correctInput } from '../utils/correctInput';
 
-// Fields that support real-time correction
 const CORRECTABLE_FIELDS = ['summary', 'experience', 'projects'];
 
 const FIELDS = [
@@ -28,9 +27,8 @@ const REQUIRED = ['name', 'contact', 'skills', 'experience', 'education'];
 const SESSION_KEY = 'resumeiq_builder_form';
 const EMPTY = Object.fromEntries([...FIELDS.map(f => [f.key, '']), ['targetRole', 'Software Engineer (General)']]);
 
-// ─── Correctable Textarea (with Fix button) ──────────────────
 function CorrectableTextarea({ id, fieldKey, value, onChange, rows, placeholder, hasError }) {
-  const [fixState, setFixState] = useState('idle'); // idle | fixed | no_change
+  const [fixState, setFixState] = useState('idle'); 
   const [changes, setChanges] = useState([]);
   const [showDiff, setShowDiff] = useState(false);
   const timerRef = useRef(null);
@@ -306,7 +304,7 @@ export default function ResumeBuilder({ onGenerate, isLoading }) {
           </div>
         </div>
 
-        {/* ── LIVE PREVIEW PANEL ── */}
+        {}
         <div className="builder-preview-panel">
           <div className="preview-sticky">
             <div className="preview-header">

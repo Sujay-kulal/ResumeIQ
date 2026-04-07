@@ -1,10 +1,3 @@
-/**
- * Resume PDF/Print Export Utility
- * Generates a styled HTML template and opens it in a new window for print-to-PDF.
- * Vector output (not rasterized) — works in all browsers.
- */
-
-// ─── Template: Modern ────────────────────────────────────────
 function modernTemplate({ name }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -46,7 +39,6 @@ __CONTENT__
 </html>`;
 }
 
-// ─── Template: Classic ───────────────────────────────────────
 function classicTemplate({ name }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -84,7 +76,6 @@ __CONTENT__
 </html>`;
 }
 
-// ─── Template: Minimal ───────────────────────────────────────
 function minimalTemplate({ name }) {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -122,7 +113,6 @@ __CONTENT__
 </html>`;
 }
 
-// ─── Parse plain text resume into HTML sections ──────────────
 function parsePlainTextToHTML(resumeText, templateName) {
   const lines = resumeText.split('\n');
   const isModern = templateName === 'modern';
@@ -144,7 +134,6 @@ function parsePlainTextToHTML(resumeText, templateName) {
 
   const totalLines = lines.length;
 
-  // First two non-empty lines = name + contact
   let headerDone = false;
   let nameFound = false;
   let contactFound = false;
@@ -153,7 +142,6 @@ function parsePlainTextToHTML(resumeText, templateName) {
     const raw = lines[i];
     const line = raw.trim();
 
-    // Header: name + contact
     if (!headerDone) {
       if (!nameFound && line) {
         html += `<div class="header"><div class="name">${line}</div>`;
@@ -169,26 +157,22 @@ function parsePlainTextToHTML(resumeText, templateName) {
       continue;
     }
 
-    // Section header
     if (SECTION_HEADERS.includes(line)) {
       flushBullets();
-      if (inSection) html += '</div>'; // close prev section
+      if (inSection) html += '</div>'; 
       sectionName = line;
       html += `<div class="section"><div class="section-title">${line}</div>`;
       inSection = true;
       continue;
     }
 
-    // Skip divider lines
     if (DIVIDER.test(line)) continue;
 
-    // Empty line = paragraph break
     if (!line) {
       flushBullets();
       continue;
     }
 
-    // Bullet lines
     if (/^[•·▸→*-]\s/.test(raw) || /^\s{2,}[•·▸→*-]\s/.test(raw)) {
       const content = line.replace(/^[•·▸→*-]\s*/, '');
       bulletBuffer.push(content);
@@ -219,7 +203,6 @@ function parsePlainTextToHTML(resumeText, templateName) {
       continue;
     }
 
-    // Regular paragraph line
     flushBullets();
     html += `<p>${line}</p>`;
   }
@@ -230,7 +213,6 @@ function parsePlainTextToHTML(resumeText, templateName) {
   return html;
 }
 
-// ─── Main export function ─────────────────────────────────────
 export function exportResumePDF(resumeText, name, contact, templateName = 'modern') {
   const htmlContent = parsePlainTextToHTML(resumeText, templateName);
 

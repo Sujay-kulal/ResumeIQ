@@ -1,6 +1,0 @@
-﻿
-D:\Sujay M (AI Resume Analyzer)\src\utils\generateResume.js
-  121:114  error  'targetRole' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
-
-Γ£û 1 problem (1 error, 0 warnings)
-

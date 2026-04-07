@@ -43,7 +43,7 @@ export default function Topbar({ user, theme, onToggleTheme, currentView, onNavi
           {theme === 'dark' ? '☀️' : '🌙'}
         </button>
 
-        {/* ── User Profile ── */}
+        {}
         <div
           className="topbar-user-profile"
           onClick={() => setShowUserCard(v => !v)}
@@ -53,7 +53,7 @@ export default function Topbar({ user, theme, onToggleTheme, currentView, onNavi
           aria-label="User profile"
           aria-expanded={showUserCard}
         >
-          {/* Avatar */}
+          {}
           <div className="topbar-avatar-wrap">
             {photoURL ? (
               <img
@@ -70,18 +70,18 @@ export default function Topbar({ user, theme, onToggleTheme, currentView, onNavi
             <span className="topbar-avatar-status" aria-hidden="true" />
           </div>
 
-          {/* Name + Email (visible on desktop) */}
+          {}
           <div className="topbar-user-info">
             <span className="topbar-user-name">{displayName}</span>
             {email && <span className="topbar-user-email">{email}</span>}
           </div>
 
-          {/* Chevron */}
+          {}
           <span className="topbar-chevron" aria-hidden="true">
             {showUserCard ? '▲' : '▾'}
           </span>
 
-          {/* Dropdown card */}
+          {}
           {showUserCard && (
             <div className="topbar-user-dropdown" role="menu">
               <div className="topbar-dropdown-header">

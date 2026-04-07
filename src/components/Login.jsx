@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { signInWithEmail, signInWithGoogle } from '../firebase';
+import { signInWithEmail, signInWithGoogle } from '../services/firebase';
 
-/** Small decorative score ring used on the left panel */
 function MiniScoreRing() {
   return (
     <div style={{ position: 'relative', width: 120, height: 120, margin: '0 auto 24px' }}>
@@ -90,7 +89,7 @@ export default function Login({ onLogin, onSwitchToSignup }) {
 
   return (
     <div className="auth-split-page">
-      {/* ── LEFT: Product Visual ── */}
+      {}
       <div className="auth-split-left" aria-hidden="true">
         <div className="auth-split-left-content">
           <div className="auth-split-logo">
@@ -123,7 +122,7 @@ export default function Login({ onLogin, onSwitchToSignup }) {
         </div>
       </div>
 
-      {/* ── RIGHT: Auth Form ── */}
+      {}
       <div className="auth-split-right">
         <div className="auth-page" style={{ background: 'none', minHeight: 'unset', padding: 0 }}>
           <div className="auth-card" style={{ boxShadow: 'none', border: 'none', background: 'none', maxWidth: 400, width: '100%' }}>

@@ -21,10 +21,9 @@ const firebaseConfig = {
   measurementId: "G-PK7MF3980C"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 if (app.name && typeof window !== 'undefined') {
-  // eslint-disable-next-line no-unused-vars
+  
   const analytics = getAnalytics(app);
 }
 export const auth = getAuth(app);
